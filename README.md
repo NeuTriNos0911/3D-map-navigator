@@ -19,7 +19,7 @@ Interactive 3D store navigation prototype built with HTML, CSS, JavaScript, Thre
 
 ## How To Run
 
-Open `code.html` in a browser, search for `delhi`, and the app will open the 3D map viewer.
+Open `index.html` in a browser, search for `delhi`, and the app will open the 3D map viewer.
 
 For the best local experience, serve the folder with a small static server:
 
@@ -30,7 +30,7 @@ python -m http.server 8000
 Then open:
 
 ```text
-http://localhost:8000/code.html
+http://localhost:8000/index.html
 ```
 
 ## Project Structure
@@ -38,6 +38,7 @@ http://localhost:8000/code.html
 ```text
 .
 |-- code.html        # Location search page
+|-- index.html       # GitHub Pages entrypoint
 |-- styles.css       # Landing page styling
 |-- logo.png         # Brand/logo asset
 `-- map/
