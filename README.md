@@ -2,6 +2,8 @@
 
 Interactive 3D store navigation prototype built with HTML, CSS, JavaScript, Three.js, and a GLB store model.
 
+[Live Demo](https://neutrinos0911.github.io/3D-map-navigator/)
+
 ## Project Snapshot
 
 - Search-driven landing page for selecting a store location.
