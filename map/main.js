@@ -7,15 +7,18 @@ import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/js
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff); // Set background to white
 
+const container = document.getElementById("container3D");
+
 // Create a camera and position it for a more zoomed-out isometric view
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(30, 30, 30); // Further zoom out the camera
+const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(24, 22, 24);
 camera.lookAt(new THREE.Vector3(0, 0, 0)); // Look at the center of the model
 
 // Create a WebGL renderer and set its size
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById("container3D").appendChild(renderer.domElement);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
 
 // Add OrbitControls to allow free rotation
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -33,6 +36,31 @@ scene.add(directionalLight);
 
 const cubes = {}; // Store references to cubes
 
+function fitCameraToObject(object) {
+  const box = new THREE.Box3().setFromObject(object);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const maxSize = Math.max(size.x, size.y, size.z);
+  const fitDistance = maxSize / (2 * Math.tan((camera.fov * Math.PI) / 360));
+
+  object.position.sub(center);
+  camera.position.set(fitDistance * 0.85, fitDistance * 0.65, fitDistance * 0.85);
+  camera.near = Math.max(fitDistance / 100, 0.1);
+  camera.far = fitDistance * 10;
+  camera.updateProjectionMatrix();
+
+  controls.target.set(0, 0, 0);
+  controls.update();
+}
+
+function resizeRenderer() {
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+}
+
 // Load the GLB model
 const loader = new GLTFLoader();
 loader.load(
@@ -41,11 +69,9 @@ loader.load(
     // Scale the model
     gltf.scene.scale.set(4, 4, 4); // Adjust scale to fit the model within the view
 
-    // Center the model in the scene
-    gltf.scene.position.set(0, 15, 0); // Ensure the model is centered
-
     // Add the loaded model to the scene
     scene.add(gltf.scene);
+    fitCameraToObject(gltf.scene);
 
     // Store references to cubes
     gltf.scene.traverse((child) => {
@@ -117,11 +143,7 @@ function animate() {
 animate();
 
 // Adjust the scene on window resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+window.addEventListener('resize', resizeRenderer);
 
 // Export the searchProduct function to be accessible globally
 window.searchProduct = searchProduct;

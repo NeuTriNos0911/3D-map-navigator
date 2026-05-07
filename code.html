@@ -9,8 +9,8 @@
         function handleSearch(event) {
             event.preventDefault(); // Prevent form submission
             
-            const searchValue = document.getElementById('search').value.toLowerCase();
-            if (searchValue === 'delhi') {
+            const searchValue = document.getElementById('search').value.trim().toLowerCase();
+            if (searchValue === 'delhi' || searchValue === '') {
                 window.location.href = 'map/index.html'; // Redirect to the 3D model viewer page
             } else {
                 alert('Location not found');
